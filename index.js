@@ -458,8 +458,15 @@ app.post("/hubspot/workflow/send-sms", async (req, res) => {
     };
 
     // Proxy configuration for SMS requests
-    const PROXY_URL =
-      "http://1e60202a8f04c085ef13__cr.nz:63caa473cb031a9e@gw.dataimpulse.com:10000";
+    const PROXY_URL = process.env.PROXY_URL;
+
+    if (!PROXY_URL) {
+      console.error("❌ [SMS] PROXY_URL environment variable is not set");
+      return res.status(500).json({
+        error: "Proxy configuration missing",
+        message: "PROXY_URL environment variable is required",
+      });
+    }
 
     const smsResponse = await request.post(SMS_GATEWAY_URL, {
       proxy: PROXY_URL,
